@@ -41,14 +41,7 @@ config.cross_num = 4
 config.temp = 0.1 
 config.clusters = 40
 config.w_post, config.w_user, config.w_pop = 1, 3, 0.1
-# if config.dataset == '300k':
-#     config.clusters = 40
-# elif config.dataset == '200k':
-#     config.clusters = 20
-# elif config.dataset == '100k':
-#     config.clusters = 40
-# else:
-#     raise ValueError('Invalid dataset')
+
 
 
 class SMPDataset(torch.utils.data.Dataset):

@@ -16,7 +16,7 @@ from sklearn.preprocessing import LabelEncoder
 from model.components import sampler
 import math
 import time
-wandb.init(project='LLM4SMP')
+wandb.init(project='PPCL')
 wandb.watch_called = False 
 batch_reduction = 0
 config = wandb.config

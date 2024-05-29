@@ -15,6 +15,7 @@ Download SMPD train dataset from http://smp-challenge.com/2023/download.html, th
 │   │   ├── train_temporalspatial_information.json
 │   │   ├── train_text.json
 │   │   ├── train_user_data.json
+|   ├── user_additional.txt
 ```
 Then 
 

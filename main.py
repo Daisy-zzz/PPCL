@@ -126,11 +126,8 @@ def main(config):
 
     # Load the data
     data = pd.read_csv('./dataset/train_data_preprocessed_{}.csv'.format(config.dataset))
-    #data['id'] = data.index
     visual_feat = np.load('./dataset/features/image_clip.npy')
     text_feat = np.load('./dataset/features/text_clip.npy')
-    visual_feat = visual_feat[data['id']]
-    text_feat = text_feat[data['id']]
     # use k-means to cluster the data['followercount'], user cluster_id to make a new column
     data['cluster_id'] = KMeans(n_clusters=config.clusters, random_state=config.seed).fit_predict(data['followerCount'].values.reshape(-1, 1))
     # compute the number of col 'vuid''s unique values

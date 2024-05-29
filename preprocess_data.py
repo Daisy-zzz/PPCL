@@ -202,4 +202,4 @@ with open("dataset/train_allmetadata_json/train_img_path.txt", "r") as t:
 t.close()
 
 # to csv file
-dataframe.to_csv('./dataset/train_data_preprocessed.csv', index=True)
+dataframe.to_csv('./dataset/train_data_preprocessed_300k.csv', index=True)

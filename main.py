@@ -244,9 +244,7 @@ def main(config):
     with open('log.txt', 'a') as f:
         print('best_mae: {}, best_mse: {}, best_src: {} \n'.format(best_mae, best_mse, best_src))
         f.write('task: {}, dataset: {}, mae: {}, mse: {}, src: {} \n'.format(config.task, config.dataset, best_mae, best_mse, best_src))
-    # np.save('./dataset/test_outputs.npy', best_outputs)
-    # torch.save(best_model, "model.h5")
-    # wandb.save('model.h5')
+
 
 if __name__ == '__main__':
     main(config)

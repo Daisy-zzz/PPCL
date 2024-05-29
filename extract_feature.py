@@ -17,7 +17,7 @@ model = CLIPModel.from_pretrained("./clip-vit-base-patch32").to(device)
 #     print(name, param.size())
 processor = CLIPProcessor.from_pretrained("./clip-vit-base-patch32")
 batch = 512
-data = pd.read_csv("./dataset/train_data_preprocessed.csv")
+data = pd.read_csv("./dataset/train_data_preprocessed_300k.csv")
 
 a = int(len(data) / batch)
 b = len(data) - a * batch

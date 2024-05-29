@@ -94,41 +94,10 @@ class Model(nn.Module):
         # Output layer
         output = self.output_layer(pop_feat)
         if self.training:
-            # if self.task == 'post':
-            #     loss_post = self.contra_post(post_feat_arg, post_label)
-            #     loss_user = torch.tensor([0]).to(cat_feat.device)
-            #     loss_pop = torch.tensor([0]).to(cat_feat.device)
-            # elif self.task == 'user':
-            #     loss_user = self.contra_user(user_feat_arg, dlabel)
-            #     loss_post = torch.tensor([0]).to(cat_feat.device)
-            #     loss_pop = torch.tensor([0]).to(cat_feat.device)
-            # elif self.task == 'pop':
-            #     loss_pop = self.contra_pop(pop_feat_arg, pop_label)
-            #     loss_user = torch.tensor([0]).to(cat_feat.device)
-            #     loss_post = torch.tensor([0]).to(cat_feat.device)
-            # elif self.task == 'post+user' or 'user+post':
-            #     loss_post = self.contra_post(post_feat_arg, post_label)
-            #     loss_user = self.contra_user(user_feat_arg, dlabel)
-            #     loss_pop = torch.tensor([0]).to(cat_feat.device)
-            # elif self.task == 'post+pop' or 'pop+post':
-            #     loss_post = self.contra_post(post_feat_arg, post_label)
-            #     loss_pop = self.contra_pop(pop_feat_arg, pop_label)
-            #     loss_user = torch.tensor([0]).to(cat_feat.device)
-            # elif self.task == 'user+pop' or 'pop+user':
-            #     loss_user = self.contra_user(user_feat_arg, dlabel)
-            #     loss_pop = self.contra_pop(pop_feat_arg, pop_label)
-            #     loss_post = torch.tensor([0]).to(cat_feat.device)
-            # else:
             loss_user = self.contra_user(user_feat_arg, dlabel)
             loss_post = self.contra_post(post_feat_arg, post_label)
             loss_pop = self.contra_pop(pop_feat_arg, pop_label)
-            # loss_user = self.contra_user(user_feat.unsqueeze(1), dlabel)
-            # loss_post = self.contra_post(post_feat.unsqueeze(1), post_label)
-            # loss_pop = self.contra_pop(pop_feat_arg_1.unsqueeze(1), pop_label)
-            # loss_user = torch.tensor([0]).to(cat_feat.device)
-            # loss_post = torch.tensor([0]).to(cat_feat.device)
-            # loss_pop = torch.tensor([0]).to(cat_feat.device)
-            #loss_pop = self.contra_rnc(pop_feat_arg, label)
+
         else:
             loss_user = 0
             loss_post = 0

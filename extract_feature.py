@@ -7,7 +7,8 @@ import os
 import pandas as pd
 import Image
 import numpy as np
-
+if not os.path.exists("./dataset/features"):
+    os.makedirs("./dataset/features")
 device = torch.device("cuda")
 image_features = []
 text_features = []

@@ -1,5 +1,5 @@
 # PPCL
-Download SMPD dataset from http://smp-challenge.com/2023/download.html, the file structure is as follows:
+Download SMPD train dataset from http://smp-challenge.com/2023/download.html, the file structure is as follows:
 ```
 ├── dataset
 │   ├── SMP_train_images

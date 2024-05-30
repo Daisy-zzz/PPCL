@@ -272,7 +272,6 @@ class sampler(Sampler):
     def __iter__(self):
         print('Start sampling......')
         sample_st = time.time()
-        # transform above codes that use torch to numpy operation
         idxs = np.random.permutation(self.num_samples)
         first_batch = idxs[:self.batch_size]
         first_cat = self.cat[first_batch]
@@ -282,7 +281,7 @@ class sampler(Sampler):
         rest_cat = self.cat[rest_batch]
         rest_subcat = self.subcat[rest_batch]
         rest_concept = self.concept[rest_batch]
-        return_idx = [first_batch]
+        return_idx = []
         while len(rest_batch) >= self.batch_size * 4:
             cat_idx = []
             subcat_idx = []
@@ -306,8 +305,8 @@ class sampler(Sampler):
             concept_idx = np.array(concept_idx)
             # caculate union of three idx
             union_idx = np.unique(np.concatenate([first_batch, cat_idx, subcat_idx, concept_idx]))
-            mask = ~np.isin(rest_batch, union_idx)
-            rest_batch = rest_batch[mask]
+            # choose all elements in rest_batch that are not in union_idx to form a new rest_batch
+            rest_batch = np.setdiff1d(rest_batch, union_idx)
             if len(union_idx) < self.batch_size * 4:
                 deleted_idx = rest_batch[: self.batch_size * 4 - len(union_idx)]
                 rest_batch = rest_batch[self.batch_size * 4 - len(union_idx):]
@@ -325,12 +324,12 @@ class sampler(Sampler):
 
         if len(rest_batch) > 0:
             return_idx.append(rest_batch)
-        return_idx = np.concatenate(return_idx)
 
+        return_idx = list(np.concatenate(return_idx).astype(np.int32))
         sample_ed = time.time()
         print('End sampling......, sampling time: ', sample_ed - sample_st)
         
-        return iter(return_idx.tolist())
+        return iter(return_idx)
         
 
 class LabelDifference(nn.Module):

@@ -20,32 +20,31 @@ class MLP(nn.Module):
         return x
     
 class ProductLayer(nn.Module):
-    def __init__(self, cat_dim, num_pair):
+        def __init__(self, reduce_sum=True):
         super(ProductLayer, self).__init__()
-        self.num_pair = num_pair
-        self.kernels = torch.nn.ParameterList(
-            [nn.Parameter(nn.init.xavier_normal_(torch.empty(cat_dim, 1)), requires_grad=True)
-             for i in range(self.num_pair)])
-        self.bias = torch.nn.ParameterList(
-            [nn.Parameter(nn.init.zeros_(torch.empty(cat_dim, 1)), requires_grad=True)
-             for i in range(self.num_pair)])
-        
+        self.reduce_sum = reduce_sum
+
     def forward(self, inputs):
+        inputs = [torch.unsqueeze(i, dim=1) for i in inputs]
         embed_list = inputs
+        row = []
+        col = []
         num_inputs = len(embed_list)
-        pair_list = []
-        cross_output = []
+
         for i in range(num_inputs - 1):
             for j in range(i + 1, num_inputs):
-                pair_list.append([embed_list[i], embed_list[j]])
-        for idx, pair in enumerate(pair_list):
-            x_0, x_1 = pair[0].unsqueeze(2), pair[1].unsqueeze(2)
-            x_2 = torch.tensordot(x_1, self.kernels[idx], dims=([1], [0]))
-            x_2 = torch.matmul(x_0, x_2)
-            x_2 = x_2 + self.bias[idx]
-            cross_output.append(x_2.squeeze(2))
-        cross_output = torch.cat(cross_output, dim=-1)
-        return cross_output
+                row.append(i)
+                col.append(j)
+        p = torch.cat([embed_list[idx]
+                       for idx in row], dim=1)  # batch num_pairs k
+        q = torch.cat([embed_list[idx]
+                       for idx in col], dim=1)
+
+        inner_product = p * q
+        if self.reduce_sum:
+            inner_product = torch.sum(
+                inner_product, dim=2)
+        return inner_product
     
 class CrossNet(nn.Module):
     def __init__(self, cat_dim, input_dim, cross_dim, num_pair, num_layers=4):
@@ -228,13 +227,14 @@ class SupConLoss(nn.Module):
             raise ValueError('Unknown mode: {}'.format(self.contrast_mode))
 
         # compute logits
-        # anchor_dot_contrast = torch.div(
-        #     torch.matmul(anchor_feature, contrast_feature.T),
-        #     self.temperature)
-        # # for numerical stability
-        # logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
-        # logits = anchor_dot_contrast - logits_max.detach()
-        logits = torch.cosine_similarity(anchor_feature.unsqueeze(1), contrast_feature.unsqueeze(0), dim=-1) / self.temperature
+        anchor_feature = F.normalize(anchor_feature, p=2, dim=1)
+        contrast_feature = F.normalize(contrast_feature, p=2, dim=1)
+        anchor_dot_contrast = torch.div(
+            torch.matmul(anchor_feature, contrast_feature.T),
+            self.temperature)
+        # for numerical stability
+        logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
+        logits = anchor_dot_contrast - logits_max.detach()
         # tile mask
         mask = mask.repeat(anchor_count, contrast_count)
         # mask-out self-contrast cases
@@ -313,14 +313,17 @@ class sampler(Sampler):
                 union_idx = np.concatenate([union_idx, deleted_idx])
             return_idx.append(union_idx)
             # update first_batch and rest_batch
-            first_batch = rest_batch[:self.batch_size]
-            first_cat = self.cat[first_batch]
-            first_subcat = self.subcat[first_batch]                                  
-            first_concept = self.concept[first_batch]
-            rest_batch = rest_batch[self.batch_size:]
-            rest_cat = self.cat[rest_batch]
-            rest_subcat = self.subcat[rest_batch]
-            rest_concept = self.concept[rest_batch]
+            if len(rest_batch) >= self.batch_size * 4:
+                first_batch = rest_batch[:self.batch_size]
+                first_cat = self.cat[first_batch]
+                first_subcat = self.subcat[first_batch]                                  
+                first_concept = self.concept[first_batch]
+                rest_batch = rest_batch[self.batch_size:]
+                rest_cat = self.cat[rest_batch]
+                rest_subcat = self.subcat[rest_batch]
+                rest_concept = self.concept[rest_batch]
+            else:
+                break
 
         if len(rest_batch) > 0:
             return_idx.append(rest_batch)

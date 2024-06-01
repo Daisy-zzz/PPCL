@@ -21,7 +21,7 @@ class Model(nn.Module):
         self.num_pairs = config.cat_num * (config.cat_num - 1) // 2
         self.align_dim = 512
         # Define MLP layers with dropout
-        self.cross_dim = config.cat_dim * (config.cat_num + self.num_pairs) + config.num_dim * (self.cross_num + 1)
+        self.cross_dim = config.cat_dim * config.cat_num + self.num_pairs + config.num_dim * (self.cross_num + 1)
         self.cross_net = CrossNet(config.cat_dim, config.num_dim, self.cross_dim, self.num_pairs, self.cross_num)
         self.user_layer = nn.Linear(self.cross_dim * 2, self.align_dim // 2)
         self.user_mlp = MLP(config.cat_dim * config.cat_num + config.num_dim, self.align_dim // 2, self.align_dim // 2)

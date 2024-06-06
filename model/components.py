@@ -56,7 +56,7 @@ class CrossNet(nn.Module):
         self.bias = torch.nn.ParameterList(
             [nn.Parameter(nn.init.zeros_(torch.empty(input_dim, 1)), requires_grad=True)
              for i in range(self.num_layers)])
-        self.product = ProductLayer(cat_dim, num_pair)
+        self.product = ProductLayer()
         # define cross for num_feat and embed
         self.mlp_kernel = nn.Parameter(nn.init.xavier_normal_(torch.empty(cross_dim, 1)),
                                            requires_grad=True)

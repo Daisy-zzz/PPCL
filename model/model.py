@@ -28,8 +28,8 @@ class Model(nn.Module):
         
         self.visual_mlp = MLP(config.visual_input, self.align_dim // config.neck, self.align_dim)
         self.text_mlp = MLP(config.text_input, self.align_dim // config.neck, self.align_dim)
-        self.v_t_mlp = MLP(self.align_dim * 2, self.align_dim, self.align_dim)
-        self.predictor = MLP(self.align_dim * 2, self.align_dim, self.align_dim)
+        self.v_t_mlp = MLP(self.align_dim * 2, 4096, self.align_dim)
+        self.predictor = MLP(self.align_dim * 2, 2048, self.align_dim)
         self.output_layer = nn.Linear(self.align_dim, 1)
         self.contra_post = HMLC(temperature=config.temp, base_temperature=config.temp)
         self.contra_user = SupConLoss(temperature=config.temp, base_temperature=config.temp)

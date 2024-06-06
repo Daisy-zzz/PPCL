@@ -18,16 +18,15 @@ import math
 import time
 wandb.init(project='PPCL')
 wandb.watch_called = False 
-batch_reduction = 0
 config = wandb.config
 config.visual_input = 512
 config.text_input = 512  
 config.task = 'all'
 config.dataset = '300k'     
-config.batch_size = 256 // (2 ** batch_reduction)
+config.batch_size = 512
 config.test_batch_size = 2048
 config.epochs = 50            
-config.lr = 1e-3 / math.sqrt(2) ** batch_reduction
+config.lr = 2e-3 / math.sqrt(2) ** batch_reduction
 config.weight_decay = 1e-4          
 config.device = torch.device('cuda:7' if torch.cuda.is_available() else 'cpu') 
 config.seed = 0  
@@ -40,7 +39,7 @@ config.neck = 4
 config.cross_num = 4 
 config.temp = 0.1 
 config.clusters = 40
-config.w_post, config.w_user, config.w_pop = 1, 3, 0.1
+config.w_post, config.w_user, config.w_pop = 3, 1, 0.1
 
 
 
